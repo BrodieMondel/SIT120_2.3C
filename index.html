@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Vue 3 Example</title>
+    <!-- Links for Vue 3 and router -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.22/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.0.11/dist/vue-router.min.js"></script>
+</head>
+<body>
+    <!-- 1. Template Syntax -->
+    <div id="app1" class="section">
+        <!-- a. Text Interpolation -->
+        <!-- Displays 'message' -->
+        <p>{{ message }}</p>  
+
+        <!-- b. Raw HTML -->
+        <!-- raw HTML using v-html -->
+        <div v-html="rawHtml"></div>
+
+        <!-- c. Attribute Bindings -->
+        <!-- binding id to 'btnId' and the text content to 'buttonText' -->
+        <button :id="btnId">{{ buttonText }}</button>
+
+        <!-- d. JavaScript expressions inside syntax -->
+        <!-- Printing the count -->
+        <p>count:</p>
+        <p>{{ count + 1 }}</p>
+    </div>
+
+    <!-- 2. Methods -->
+    <!-- Providing a counter for the incremeint button -->
+    <div id="app2" class="section">
+        <button @click="incrementCounter">Increment</button>
+        <p>Counter: {{ count }}</p>
+    </div>
+
+    <!-- 3. Reactivity Fundamentals -->
+    <!-- Displaying the value of reactiveData -->
+    <div id="app3" class="section">
+        <p>{{ reactiveData }}</p>
+    </div>
+
+    <!-- 4. Computed Properties -->
+    <!-- Displaying an uppercase version of message -->
+    <div id="app4" class="section">
+        <p>Computed: {{ computedProperty }}</p>
+    </div>
+
+    <!-- 5. Class and Style Bindings -->
+    <div id="app5" class="section">
+        <!-- a. Binding HTML class -->
+        <!-- Applies classes based on conditions (isActive and isError) -->
+        <div :class="{ active: isActive, 'text-danger': isError }">Class Binding</div>
+
+        <!-- b. Binding Inline Styles -->
+        <!-- Sets inline styles (color and fontSize) -->
+        <div :style="{ color: textColor, fontSize: '16px' }">Style Binding</div>
+    </div>
+
+    <!-- 6. List Rendering -->
+    <div id="app6" class="section">
+        <!-- a. v-for with an Object -->
+        <ul>
+            <!-- Loop through dataObject -->
+            <li v-for="(value, key) in dataObject" :key="key">{{ key }}: {{ value }}</li>
+        </ul>
+
+        <!-- b. v-for with a Range -->
+        <ul>
+            <!-- Set a range of 1-5 -->
+            <li v-for="n in 5" :key="n">Item {{ n }}</li>
+        </ul>
+
+        <!-- c. v-for on <template> -->
+        <!-- conditionally render the items -->
+        <template v-for="(item, index) in items">
+            <p :key="index">Item {{ item }}</p>
+        </template>
+
+        <!-- d. v-for with v-if -->
+        <ul>
+            <!-- Creating a list item for each element -->
+            <li v-for="item in itemsWithCondition" :key="item">{{ item }}</li>
+        </ul>
+
+        <!-- e. v-for with a component -->
+        <ul>
+            <!-- Using custom-item with a v-for loop -->
+            <custom-item v-for="item in items" :key="item" :item="item"></custom-item>
+        </ul>
+    </div>
+
+    <!-- 7. Event Handling -->
+    <div id="app7" class="section">
+        <!-- a. Inline Handlers -->
+        <button @click="handleClick">(Inline)</button><br><br>
+
+        <!-- b. Method Handlers -->
+        <button @click="handleButtonClick">(Method)</button>
+    </div>
+
+    <!-- 8. Form Input Bindings -->
+    <!-- Using v-model to bind seperate input values to the data propeties -->
+    <div id="app8" class="section">
+        <input type="text" v-model="textValue" placeholder="Text Input"><br>
+        <input type="text" v-model.lazy="lazyValue" placeholder="Lazy Binding (Updates on Blur)"><br>
+        <input type="text" v-model.number="numberValue" placeholder="Number Binding (Converts to Number)"><br>
+        <input type="text" v-model.trim="trimValue" placeholder="Trim Binding (Removes Leading/Trailing Spaces)"><br>
+        <input type="checkbox" v-model="isChecked"> Checkbox -><br>
+        <input type="radio" v-model="selectedOption" value="option1"> Option 1 -><br>
+        <input type="radio" v-model="selectedOption" value="option2"> Option 2 -><br>
+        <select v-model="selectedOption">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+        </select><br>
+        <textarea v-model="textareaValue" placeholder="Textarea"></textarea>
+    </div>
+
+    <!-- 9. Watchers -->
+    <!-- Alert when watchedValue changes -->
+    <div id="app9" class="section">
+        <p>Watched Value: {{ watchedValue }}</p>
+        <input type="text" v-model="watchedValue">
+    </div>
+
+    <!-- 10. Components -->
+    <div id="app10" class="section">
+        <!-- HTML Part: Component Usage and Slots -->
+        <!-- a. Props: Use the custom-component and pass prop1 -->
+        <!-- Passing props (prop1 and lazyProp) to the custom-component -->
+        <custom-component :prop1="componentProp" @customEvent="handleCustomEvent">
+            <!-- c. Slots: Define a slot named 'slotName' -->
+            <template #slotName>
+                <p>This is a slot content.</p>
+            </template>
+        </custom-component>
+
+        <!-- Custom Component: Second instance with additional features -->
+        <!-- Passing data from parent to child components -->
+        <custom-component
+            :prop1="componentProp"
+            @customEvent="handleCustomEvent"
+            :lazyProp="lazyValue"
+            @customEventWithArg="handleCustomEventWithArg"
+    >
+            <!-- Additional Slot: Define a slot named 'anotherSlot' -->
+            <template #anotherSlot>
+                <p>Another slot content.</p>
+            </template>
+        </custom-component>
+    </div>
+
+
+    <!-- 11. Router -->
+    <div id="app11" class="section">
+        <router-link to="/home">Home</router-link>
+        <router-link to="/about">About</router-link>
+
+        <router-view></router-view>
+    </div>
+
+    <script>
+        // 1. Template Syntax
+        const app1 = Vue.createApp({
+            data() {
+                return {
+                    message: 'Brodie Mondel, 221282824 - 2.3C',
+                    rawHtml: '<span style="color: red;">Raw Html - Red</span>',
+                    btnId: 'my-button',
+                    buttonText: 'Button',
+                    count: -1,
+                };
+            },
+        });
+        app1.mount('#app1');
+
+        // 2. Methods
+        const app2 = Vue.createApp({
+            data() {
+                return {
+                    count: 0,
+                };
+            },
+            methods: {
+                incrementCounter() {
+                    this.count++;
+                },
+            },
+        });
+        app2.mount('#app2');
+
+        // 3. Reactivity Fundamentals
+        const app3 = Vue.createApp({
+            data() {
+                return {
+                    reactiveData: 'I am Reactive Data',
+                };
+            },
+        });
+        app3.mount('#app3');
+
+        // 4. Computed Propeties
+        const app4 = Vue.createApp({
+            data() {
+                return {
+                    message: 'Hello, Good Afternoon!',
+            };
+            },
+            computed: {
+                computedProperty() {
+                    return this.message.toUpperCase();
+                },
+            },
+        });
+        app4.mount('#app4');
+
+        // 5. Class and Style Bindings
+        const app5 = Vue.createApp({
+            data() {
+                return {
+                    isActive: true,
+                    isError: false,
+                    textColor: 'blue',
+                };
+            },
+        });
+        app5.mount('#app5');
+
+        // 6. List Rendering
+        // Each list will display a key-value from dataObject
+        const app6 = Vue.createApp({
+            data() {
+                return {
+                    dataObject: {
+                        key1: 'Value 1',
+                        key2: 'Value 2',
+                        key3: 'Value 3',
+                    },
+                };
+            },
+        });
+        app6.mount('#app6');
+
+        // 7. Event Handling
+        const app7 = Vue.createApp({
+            methods: {
+                handleClick() {
+                    alert('Inline Handler Clicked!');
+                },
+                handleButtonClick() {
+                    alert('Method Handler Clicked!');
+                },
+            },
+        });
+        app7.mount('#app7');
+
+        // 8. Form Input Bindings
+        const app8 = Vue.createApp({
+            data() {
+                return {
+                    textValue: '', // initialize as empty str
+                    isChecked: false, // initialize as false
+                    selectedOption: null, // initialize as null
+                    textareaValue: '', // initialize as empty str
+                };
+            },
+        });
+        app8.mount('#app8');
+
+        // 9. Watchers
+        const app9 = Vue.createApp({
+            data() {
+                return {
+                    watchedValue: '',
+                };
+            },
+            // specifying which data propety will be watched
+            // alerting when newVal is changed
+            watch: {
+                watchedValue(newVal) {
+                    alert(`Watched Value Changed: ${newVal}`);
+                },
+            },
+        });
+        app9.mount('#app9');
+
+        // Custom Component Definition
+        const CustomComponent = {
+            props: ['prop1', 'lazyProp'], // Define the accepted props
+            template: `
+                <div>
+                    <p>Component Prop: {{ prop1 }}</p>
+                    <button @click="emitCustomEvent">Click me to emit event</button>
+                    <slot name="slotName"></slot>
+                    <slot name="anotherSlot"></slot>
+                </div>
+            `,
+            setup(props, { emit }) {
+                const emitCustomEvent = () => {
+                    // emit custom event named 'customEvent'
+                    emit('customEvent', 'Event payload');
+                };
+
+                return {
+                    emitCustomEvent,
+                };
+            },
+        };
+
+        // Main Vue App
+        const app10 = Vue.createApp({
+            data() {
+                return {
+                    componentProp: 'Component Prop Value', // initial prop1 value
+                    lazyValue: 'Initial Lazy Value', // initial value for lazyValue
+                };
+            },
+            methods: {
+                handleCustomEvent(payload) {
+                    // Handle custom event emitted by the child component
+                    alert(`Custom Event Handler: ${payload}`);
+                },
+                handleCustomEventWithArg(arg) {
+                    // Handle custom event with an argument
+                    alert(`Custom Event Handler With Arg: ${arg}`);
+                },
+            },
+        });
+
+        // Register the custom component globally
+        app10.component('custom-component', CustomComponent);
+
+        // Mount the app to the element - #app10
+        app10.mount('#app10');
+
+        // 11. Router
+        const app11 = Vue.createApp({});
+
+        // Home and About components
+        const Home = {
+            template: '<div>Home Page</div>',
+        };
+
+        const About = {
+            template: '<div>About Page</div>',
+        };
+
+        // Define routes and components for the router
+        const routes = [
+            { path: '/home', component: Home },
+            { path: '/about', component: About },
+        ];
+
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(), // setup router history with hash mode
+            routes, // define routes for application
+        });
+
+        app11.use(router); // intergrates router
+        app11.mount('#app11');
+    </script>
+</body>
+</html>
